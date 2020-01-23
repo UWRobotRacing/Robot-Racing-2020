@@ -15,7 +15,7 @@ public:
     SteeringServo();
     SteeringServo (uint8_t PIN);
 
-    void setAngle(int8_t angle); //angle in degrees, positive CW, negative CCW
+    void setAngle(int8_t angle); //angle as percent, positive CW, negative CCW
 
     void incrementAngle(direction);
 
