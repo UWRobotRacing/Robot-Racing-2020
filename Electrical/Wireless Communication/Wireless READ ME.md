@@ -19,5 +19,9 @@ https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all
 SPI Library:
 https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi/all
 
+To Understand the code from last years's team you will need to understand masks:
+https://stackoverflow.com/questions/31575691/what-is-a-bitmask-and-a-mask
+https://alemil.com/bitmask
+
 Library Information:
 http://www.airspayce.com/mikem/arduino/RadioHead/
