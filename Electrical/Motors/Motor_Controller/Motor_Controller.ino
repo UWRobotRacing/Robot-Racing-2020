@@ -42,7 +42,7 @@ void loop() {
             break;
 
         default:
-            DEBUG("Not a valid command");
+            DEBUG("Not a valid command\n");
             break;
         }   
     }
