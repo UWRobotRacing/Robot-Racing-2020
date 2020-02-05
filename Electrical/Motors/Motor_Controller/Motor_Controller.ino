@@ -1,12 +1,15 @@
 #include "ESC.h"
 #include "Steering_Servo.h"
+#include "Serial_com.h"
+
 #include "debug.h"
 
 ESC rearMotor;
 SteeringServo servo;
+SerialConnection conn;
 
 void setup() {
-    beginSerial(9600);
+    conn = SerialConnection(9600);
     rearMotor = ESC(9);
     servo = SteeringServo(10);
     delay(1000);
@@ -15,46 +18,34 @@ void setup() {
 
 void loop() {
 
-    //Get available serial input    
-    if (Serial.available() > 0) {
-        char prefix = Serial.read();
-        int received = Serial.parseInt();
-
-        DEBUG("Received: ");
-        DEBUG(prefix);
-        DEBUG(received);
-        DEBUG("\n");
-
-
+    if (conn.dataAvailable()) {
+        char command = conn.getCommandType();
+        int value = conn.getCommandValue();
         
-        if (prefix == 'D')//prefix 'D' to the speed to set drive speed
+        switch (command)
         {
-            rearMotor.setSpeed(received);
-        }
-        else if (prefix == 'S') //prefix 'S' for steering angle
-        {
-            servo.setAngle(received);
-        }
-        else if (prefix == 'I') //prefix 'I' for increment
-        {
-            received >= 0 ? servo.incrementAngle(servo.Clockwise) 
+        case 'D': //Set the dive speed
+            rearMotor.setSpeed(value);
+            break;
+        
+        case 'S': //Set the Steering Angle
+            servo.setAngle(value);
+            break;
+
+        case 'I': //Increment the steering Angle
+            value >= 0 ? servo.incrementAngle(servo.Clockwise) 
                             : servo.incrementAngle(servo.Counterclockwise);
-        }
-        else if (prefix == 'A') //'A' for arm ESC
-        {
+            break;
+
+        case 'A': //Arm the ESC
             rearMotor.arm();
-        }         
+            break;
 
+        default:
+            DEBUG("Not a valid command");
+            break;
+        }   
     }
 }
 
-//PURPOSE: Waits for serial connection to be established between PC/arduino
-void beginSerial(int baudRate) {
-    Serial.begin(baudRate);
-    //Wait for serial connection to be established
-    while (!Serial){
-        ;
-    }
-    Serial.println("Serial connection established.");
-}
 
