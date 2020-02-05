@@ -9,24 +9,27 @@ SteeringServo::SteeringServo() {}
 SteeringServo::SteeringServo(uint8_t PIN) {
     this->PIN = PIN;
     this->angle = 0;
-    this->motor.attach(PIN, 25, 155);
-    setAngle(90);
+    this->percentAngle = 0;
+    this->motor.attach(PIN);
+    setAngle(0);
 }
 
-//Sets the speed of the ESC by percentage
-void SteeringServo::setAngle(uint8_t angle) {
+//Sets the angle of the wheels by percentage
+void SteeringServo::setAngle(int8_t angle) {
 
     //COMBAK: Need to experimentally determine these values.
-    uint8_t max_angle = 155;
-    uint8_t min_angle = 25;
+    uint8_t max_angle = 120;
+    uint8_t min_angle = 60;
 
     
     DEBUG("Value before constrain:");
     DEBUG(angle);
     DEBUG("\n");
 
-    //Turn speed percentage to correct output
-    angle = constrain(angle, min_angle, max_angle);
+    this->percentAngle = angle;
+
+    //Turn angle percentage to correct output
+    angle = constrain(map(angle, -100, 100, min_angle, max_angle), min_angle, max_angle);
     
     this->angle = angle;
     
@@ -41,7 +44,7 @@ void SteeringServo::incrementAngle(direction direction) {
     DEBUG("Incrementing angle: ");
     DEBUG(direction);
     DEBUG('\n');
-    setAngle(this->angle + direction);
+    setAngle(this->percentAngle + direction);
 }
 
 int8_t SteeringServo::getAngle() {

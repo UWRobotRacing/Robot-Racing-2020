@@ -5,16 +5,17 @@ class SteeringServo {
 private:
     int8_t angle;
     uint8_t PIN;
+    int8_t percentAngle;
     Servo motor;
 
 public:
     
-    enum direction {Clockwise = -1, Counterclockwise = 1};
+    enum direction {Clockwise = 1, Counterclockwise = -1};
 
     SteeringServo();
     SteeringServo (uint8_t PIN);
 
-    void setAngle(uint8_t angle); //angle in degrees, positive CW, negative CCW
+    void setAngle(int8_t angle); //angle as percent, positive CW, negative CCW
 
     void incrementAngle(direction);
 
