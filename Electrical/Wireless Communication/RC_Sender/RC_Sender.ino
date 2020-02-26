@@ -8,7 +8,7 @@ const byte address[6] = "00101";
 #define DEBUG_PRINT_MSG             1
 #define DEBUG_PLOT_CONTRL_RESPONSE  0
 // only one debug mode can be selected (DEBUG_PRINT_MSG higher priority)
-#if (DEBUG_PLOT_CONTRL_RESPONSE && DEBUG_PRINT_MSG)
+#if (DEBUG_PLOT_CONTRL_RESSPONSE && DEBUG_PRINT_MSG)
 #undef DEBUG_PLOT_CONTRL_RESPONSE
 #define DEBUG_PLOT_CONTRL_RESPONSE 0
 #endif
@@ -157,6 +157,8 @@ void loop() {
     buf |= (temp << 8);                //set speed
     temp = mCtrl_values[1];
     buf |= (temp << 20);               //set steering
+
+    prevMillis = currentMillis;
   }
   
   //every transmit interval
@@ -191,7 +193,6 @@ void loop() {
     Serial.println(GET_SPD(buf));
 #endif
   }
-  prevMillis = currentMillis;
 
 }
 

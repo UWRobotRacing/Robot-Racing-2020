@@ -53,19 +53,9 @@ void loop() {
 
     temp2 = map(temp2, 110, 965, 1200, 1850);
     myservo.writeMicroseconds(temp2);
+
+
+    
   }
-//  uint8_t steer = (buf>>2)&0xFF;
-//  uint8_t power = buf&1;
-//
-//  uint8_t steer_angle = uint16_t(steer - 256/2)*60/256+85;
-//  myservo.write(steer_angle);
-//  if(power)
-//  {
-//    firstESC.writeMicroseconds(1580);
-//  }else
-//  {
-//    firstESC.writeMicroseconds(0);
-//  }
-////  Serial.println(steer);
-////  Serial.println(power);
+
 }
