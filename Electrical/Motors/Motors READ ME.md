@@ -7,3 +7,9 @@ Motors being used are:
 Datasheets for motors can be found at:
 
 Useful Links to learn more:
+
+
+
+The servo has been underpowered at the time of writing. we need to make sure we power the servo correctly (we currently use https://servodatabase.com/servo/hitec/hs-7954sh)
+
+Looking for a replacement, this is a promising option: https://servodatabase.com/servo/hitec/hs-7980
