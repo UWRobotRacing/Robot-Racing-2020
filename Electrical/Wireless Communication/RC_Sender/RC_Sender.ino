@@ -5,7 +5,7 @@ RF24 radio(7, 8); // CE, CSN
 const byte address[6] = "00101";
 
 #define DEBUG_MODE                  1
-#define DEBUG_PRINT_MSG             1
+#define DEBUG_PRINT_MSG             0
 #define DEBUG_PLOT_CONTRL_RESPONSE  0
 // only one debug mode can be selected (DEBUG_PRINT_MSG higher priority)
 #if (DEBUG_PLOT_CONTRL_RESSPONSE && DEBUG_PRINT_MSG)
@@ -36,8 +36,8 @@ uint16_t mCtrl_values[2] = {0};// spd, steering
 
 //---- Control values ------//
 unsigned long currentMillis;
-unsigned long prevMillis;
-unsigned long transmitCurMillis;
+unsigned long prevJoyMillis;
+unsigned long prevSwitchMillis;
 unsigned long transmitPrevMillis;
 #define TRANSMIT_INTERVAL         50 // ms
 #define DEBOUNCING_SETTLE_TIMES   10 // times
@@ -75,18 +75,23 @@ void setup() {
   digitalWrite(PIN_LED_ESTOP, LOW);
 
 #if DEBUG_MODE
-  Serial.begin(57600);
+  Serial.begin(9600);
 #endif
 }
 
 void loop() {
+  
   currentMillis = millis();
-  transmitCurMillis = millis();
   //every 2ms  - Switch Input
-  if ((currentMillis - prevMillis) % 2) {
+  if (currentMillis - prevSwitchMillis >= 2) {
     // ------ switch check -----
+
     bool btn_estop = digitalRead(PIN_ESTOP);
     bool btn_auto = digitalRead(PIN_AUTO);
+
+//    Serial.print(btn_estop);
+    Serial.print(" ");
+    Serial.println(btn_auto);
 
     uint8_t flag = MASK_UNIQUE_PATTERN | btn_estop | btn_auto << 1;
     // - if the buffer has an err. pattern, reset it
@@ -105,24 +110,39 @@ void loop() {
       buf &= (~MASK_BUFFER_FLAG); //clear flag
       buf |= flag; //apply new flag
 
-      if (GET_FLAG(buf)&B00000010) { //Auto on
+
+    }
+
+    //      if (GET_FLAG(buf)&B00000010) { //Auto on
+//        digitalWrite(PIN_LED_AUTO, HIGH);
+//      } else {
+//        digitalWrite(PIN_LED_AUTO, LOW);
+//      }
+
+      if (btn_auto) { //Auto on
         digitalWrite(PIN_LED_AUTO, HIGH);
       } else {
         digitalWrite(PIN_LED_AUTO, LOW);
       }
 
-      if (GET_FLAG(buf)&B00000001) {
+//      if (GET_FLAG(buf)&B00000001) {
+//        digitalWrite(PIN_LED_ESTOP, HIGH);
+//      } else {
+//        digitalWrite(PIN_LED_ESTOP, LOW);
+//      }
+
+      if (btn_estop) {
         digitalWrite(PIN_LED_ESTOP, HIGH);
       } else {
         digitalWrite(PIN_LED_ESTOP, LOW);
       }
-    }
   }
 
-
   // every 4ms  - JOYSTICK Input
-  if ((currentMillis - prevMillis) % 4) {
+  if (currentMillis - prevJoyMillis >= 4) {
+    prevJoyMillis = millis();
     // ------ ADC Sampling & low pass-----
+  
     uint16_t steer_raw_input = analogRead(A1);
     uint16_t spd_raw_input = analogRead(A0);
     //      Serial.print(steer_raw_input);
@@ -157,12 +177,10 @@ void loop() {
     buf |= (temp << 8);                //set speed
     temp = mCtrl_values[1];
     buf |= (temp << 20);               //set steering
-
-    prevMillis = currentMillis;
   }
   
   //every transmit interval
-  if (transmitCurMillis - transmitPrevMillis >= TRANSMIT_INTERVAL) {
+  if (currentMillis - transmitPrevMillis >= TRANSMIT_INTERVAL) {
 //    Serial.println("loop");
     transmitPrevMillis = millis();
     //- Send
@@ -193,7 +211,6 @@ void loop() {
     Serial.println(GET_SPD(buf));
 #endif
   }
-
 }
 
 bool send_packet() {
