@@ -44,7 +44,7 @@ void loop() {
       Serial.print(",");  
       Serial.print(temp2,DEC);
       Serial.print(",");   
-      Serial.print(temp3,BIN);
+      Serial.print(temp3,DEC);
       Serial.println("");
     }else{
       Serial.print(temp3,BIN);
