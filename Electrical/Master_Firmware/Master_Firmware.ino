@@ -62,14 +62,12 @@ void loop() {
             
             //Remote estop
             if (bitRead(temp3, 0) == 1) {
-                Serial.println("estop");
+//                Serial.println("estop");
                 failsafe();
             } else {
-
                 //auto mode
                 if (bitRead(temp3, 1) == 1) {
-                  Serial.println("auto");
-                  /*
+//                  Serial.println("auto");
                     if (conn.dataAvailable()) {
                         char command = conn.getCommandType();
                         int value = conn.getCommandValue();
@@ -98,10 +96,8 @@ void loop() {
                             break;
                         }   
                     }
-                    */
                 } else { //remote mode
-                  Serial.println("remote");
-                   /*
+//                  Serial.println("remote");
                     Serial.print(temp1,DEC);  
                     Serial.print(",");
                     Serial.print(temp2,DEC);
@@ -114,7 +110,6 @@ void loop() {
                     Serial.print(",");
                     servo.setAngle(tempSteer);
                     Serial.print("\n");
-                    */
                 }
             }
         } else {
